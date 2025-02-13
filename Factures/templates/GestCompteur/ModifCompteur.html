@@ -1,0 +1,32 @@
+{% extends 'Accueil.html' %}
+{% block content %}
+<div class="modal-content container  container w-50 p-2 dark">
+                <div class="modal-header dark">
+                    <p class="modal-title h5 font-italic font-weight-bold dark" id="abonneeModalLabel">Modification du Compteur de  {{ compteur.abonnee}}</p>
+                </div>
+                <div class="modal-body dark" style="height: 250px">
+                    <form method="post" action="{% url 'GestCompteurs' 3 compteur.id %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="nomAbonnee">abonné</label>
+                            <select id="columnSelector" name="abonnee" class="form-control d-inline dark" >
+                                <option value="{{ compteur.abonnee.id}}">{{ compteur.abonnee}}</option>
+                                {% for abonne in abonnes %}
+                                    {% if abonne.id != compteur.abonnee.id %}
+                                        <option value="{{ abonne.id }}" class="text-light">{{ abonne.nom }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact">Numéro du compteur</label>
+                            <input type="text" class="form-control dark" name="numero_compteur" value="{{ compteur.numero_compteur }}" id="contact"
+                                   placeholder="Entrez le numéro du compteur">
+                        </div>
+                        <button type="submit" class="btn btn-dark position-absolute w-25" style="right: 18px;">
+                            Modifier
+                        </button>
+                    </form>
+                </div>
+            </div>
+{% endblock %}

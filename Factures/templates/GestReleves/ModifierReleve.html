@@ -1,0 +1,48 @@
+{% extends 'Accueil.html' %}
+{% block content %}
+    <div class="modal-content container w-50 p-2 dark">
+        <div class="modal-header dark">
+            <p class="modal-title h5 font-italic font-weight-bold dark" id="abonneeModalLabel">Modification du relevé du compteur {{ releve.compteur.numero_compteur }}
+                                de {{ releve.compteur.abonnee.nom }}</p>
+        </div>
+        <div class="modal-body dark" style="height: 500px">
+            <form method="post" action="{% url 'GestionReleve' 3 releve.id %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="compteur">Compteur</label>
+                    <select id="compteur" name="compteur" class="form-control d-inline dark">
+                        <option value="{{ releve.compteur.id}}">Compteur {{ releve.compteur.numero_compteur }} de {{ releve.compteur.abonnee.nom }}</option>
+                                {% for compteur in compteurs %}
+                                    {% if releve.compteur.id != compteur.id %}
+                                        <option value="{{ compteur.id}}">Compteur {{ compteur.numero_compteur }} de {{ compteur.abonnee.nom }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date_releve">Date relevé</label>
+                    <input type="datetime-local" class="form-control dark" name="date_releve" value="{{ date_releve_formatted }}" id="date_releve"
+                           placeholder="Entrez la date de relevé">
+                </div>
+                <div class="form-group">
+                    <label for="index_avant">Index avant</label>
+                    <input type="number" step="0.01" class="form-control dark" name="index_avant" id="index_avant" value="{{ releve.index_avant }}"
+                           placeholder="Entrez l'index avant">
+                </div>
+                <div class="form-group">
+                    <label for="index_actuelle">Index après</label>
+                    <input type="number" step="0.01" class="form-control dark" name="index_actuelle" id="index_actuelle" value="{{ releve.index_actuelle }}"
+                           placeholder="Entrez l'index après">
+                </div>
+                <div class="form-group">
+                    <label for="consommation">Consommation</label>
+                    <input type="number" step="0.01" class="form-control dark" name="consommation" id="consommation" value="{{ releve.consommation }}"
+                           placeholder="Entrez la consommation" readonly>
+                </div>
+                <button type="submit" class="btn btn-dark position-absolute w-25" style="right: 18px;">
+                    Modifier
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,172 @@
+{% load static %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture d'Eau</title>
+    <link rel="stylesheet" href="{% static 'src/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'src/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'src/style.css' %}">
+    <style>
+        .modal-content.dark {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+
+        .modal-header.dark {
+            border-bottom: 1px solid #495057;
+        }
+
+        .modal-title.dark {
+            color: #ffffff;
+        }
+
+        .modal-body.dark {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+
+        .form-control.dark {
+            background-color: #495057;
+            color: #ffffff;
+            border: 1px solid #6c757d;
+        }
+
+        .btn-dark {
+            background-color: #212529;
+            border-color: #212529;
+        }
+
+        .btn-dark:hover {
+            background-color: #32383e;
+            border-color: #32383e;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row" style="height: 100vh">
+        <div class="Bannier p-2 bg-dark col-2">
+            <img src="{% static 'img/Logo.png' %}" alt="Logo" class="d-block m-auto w-50">
+            <div class="m-4"></div>
+            <hr class="w-75 border-0 bg-white p-1 rounded-pill m-auto"/>
+            <div class="d-flex mt-4 p-1 justify-content-center flex-column" style="gap: 10px; cursor: pointer;text-transform: none">
+                <div class="d-flex p-2 rounded-lg bg-dark text-light">
+                    <a href="/Liste des Abonnés/2/1" class="ml-3 h6 text-light"><i class="fa fa-user-friends mr-2"></i>Gestion Abonnés</a>
+                </div>
+            </div>
+            <div class="d-flex mt-1 p-1 justify-content-center flex-column" style="gap: 10px; cursor: pointer">
+                <div class="d-flex p-2 rounded-lg bg-dark text-light">
+                    <a href="/Liste des Compteurs/2/1" class="ml-3 h6 text-light"><i class="fa fa-tachometer-alt mr-2"></i>Gestion Compteurs</a>
+                </div>
+            </div>
+            <div class="d-flex mt-1 p-1 justify-content-center flex-column" style="gap: 10px; cursor: pointer">
+                <div class="d-flex p-2 rounded-lg bg-dark text-light">
+                    <a href="/Liste des Relevés/2/1" class="ml-3 h6 text-light"><i class="fa fa-table-list mr-2"></i>Gestion Relevés</a>
+                </div>
+            </div>
+            <div class="d-flex mt-1 p-1 justify-content-center flex-column" style="gap: 10px; cursor: pointer">
+                <div class="d-flex p-2 rounded-lg bg-dark text-light">
+                    <a href="/Liste des Factures/2/1"  class="ml-3 h6 text-light"><i class="fa fa-file-invoice mr-2"></i>Gestion Factures</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-10">
+            <div class="row m-4 text-light text-capitalize tex rounded-bottom bg-dark p-2">
+                <div class="col-4 pt-2">
+                    <p class="h6">Gest. Factures d'eau</p>
+                </div>
+                <div class="col"></div>
+            </div>
+{#            <p class="h6 m-3"><i class="fa fa-user-friends mr-2"></i>Gestion Abonnés<i class="fa fa-angles-right"></i>#}
+{#                Nouveau <i class="fa fa-angles-right"></i></p>#}
+            {% block content %}
+
+            {% endblock %}
+        </div>
+    </div>
+</div>
+</body>
+<script src="{% static 'src/bootstrap/js/bootstrap.min.js' %}"></script>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script
+<script src="{% static 'GestFacture/static/src/fontawesome/js/all.min.js' %}"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const moisSelect = document.getElementById('periode');
+            const mois = [
+                'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+                'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+            ];
+            const anneeCourante = new Date().getFullYear();
+
+            mois.forEach((mois, index) => {
+                const option = document.createElement('option');
+                option.value = `${mois} ${anneeCourante}`;
+                option.textContent = `${mois} ${anneeCourante}`;
+                moisSelect.appendChild(option);
+            });
+        });
+    </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+            var indexAvant = document.getElementById('index_avant');
+            var indexActuelle = document.getElementById('index_actuelle');
+            var consommation = document.getElementById('consommation');
+
+            function updateConsommation() {
+                var indexAvantValue = parseFloat(indexAvant.value) || 0;
+                var indexActuelleValue = parseFloat(indexActuelle.value) || 0;
+                var consommationValue = indexActuelleValue - indexAvantValue;
+                consommation.value = consommationValue.toFixed(2);
+            }
+
+            indexAvant.addEventListener('input', updateConsommation);
+            indexActuelle.addEventListener('input', updateConsommation);
+        });
+    document.getElementById('searchInput').addEventListener('input', function () {
+        filterTable();
+    });
+
+    document.getElementById('columnSelector').addEventListener('change', function () {
+        filterTable();
+    });
+
+    function filterTable() {
+        var input = document.getElementById('searchInput').value.toLowerCase();
+        var column = document.getElementById('columnSelector').value;
+        var table = document.getElementById('abonneTable');
+        var tr = table.getElementsByTagName('tr');
+
+        for (var i = 1; i < tr.length; i++) {
+            var td = tr[i].getElementsByTagName('td')[column === 'nom' ? 0 : column === 'contact' ? 1 : 2];
+            if (td) {
+                var txtValue = td.textContent || td.innerText;
+                if (txtValue.toLowerCase().indexOf(input) > -1) {
+                    tr[i].style.display = '';
+                } else {
+                    tr[i].style.display = 'none';
+                }
+            }
+        }
+    }
+    $('#confirmDeleteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var abonnee = button.data('abonnee'); // Extract info from data-* attributes
+        var modal = $(this);
+        modal.find('#abonneeName').text(abonnee);
+    });
+
+    $('#confirmDeleteButton').on('click', function () {
+        // Ajoutez ici le code pour supprimer l'abonné
+        $('#confirmDeleteModal').modal('hide');
+    });
+
+</script>
+</html>
+
+

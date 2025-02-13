@@ -1,0 +1,48 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.facture {
+    width: 92%;
+    margin: 80px auto;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+}
+h5{
+    margin-top: -20px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+}
+
+.details, .contacts, .message {
+    margin-bottom: 20px;
+}
+
+.details p, .contacts p, .message p {
+    margin: 10px ;
+    font-size: 12px;
+}
+
+::-webkit-scrollbar{
+    width: 5px;
+}
+::-webkit-scrollbar-track{
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb{
+    background: white;
+    border-radius: 10px;
+}

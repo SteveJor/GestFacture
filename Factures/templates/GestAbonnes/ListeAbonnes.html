@@ -1,0 +1,106 @@
+{% extends 'Accueil.html' %}
+{% block content %}
+    <h5 class="font-italic font-weight-bold m-4">Gestion des Abonnés</h5>
+    <div class="mb-3 d-flex justify-content-end flex-row">
+                <select id="columnSelector" class="form-control d-inline" style="width: 100px">
+                    <option value="nom">Nom</option>
+                    <option value="contact">Contact</option>
+                    <option value="tarif">Tarif</option>
+                </select>
+                <input type="text" id="searchInput" class="form-control  w-25  d-inline" placeholder="Rechercher...">
+            </div>
+            <div class="container text-capitalize tex rounded p-1" style="height: 700px;overflow: auto">
+
+                <table class="table container w-75 table-striped table-bordered" id="abonneTable">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Contact</th>
+                        <th>Montant</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for abonne in abonnes %}
+                        <tr style="cursor: pointer">
+                            <td> <a href="/Liste des Abonnés/1/{{ abonne.id }}" style="text-transform: none" class="text-info">{{ abonne.nom }}</a></td>
+                            <td>{{ abonne.tel }}</td>
+                            <td>{{ abonne.tarif }}</td>
+                        <td style="width: 150px">
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDeleteModal{{ abonne.id }}" data-abonnee="{{ abonne.abonnee }}">
+                                    <i class="fa fa-trash mr-2"></i>Supprimer
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="btn btn-dark p-3 h6 position-fixed shadow-sm rounded-pill " data-toggle="modal"
+                    data-target="#abonneeModal" style="right: 15px;bottom: 20px;height: 60px"><i class="fa fa-add"></i>Ajouter
+            </button>
+            <!-- Modal -->
+            <div class="modal fade" id="abonneeModal" tabindex="-1" aria-labelledby="abonneeModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content p-2 dark">
+                        <div class="modal-header dark">
+                            <p class="modal-title h5 font-italic font-weight-bold dark" id="abonneeModalLabel">Nouvel
+                                Abonné</p>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body dark" style="height: 350px">
+                            <form method="post" action="{% url 'accueil' 4 1 %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="nomAbonnee">Nom abonnées</label>
+                                    <input type="text" class="form-control dark" name="nom"  id="nomAbonnee"
+                                           placeholder="Entrez le nom de l'abonné">
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact">Contact</label>
+                                    <input type="text" class="form-control dark" name="tel"  id="contact"
+                                           placeholder="Entrez le contact de l'abonné">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tarif">Tarif</label>
+                                    <input type="number" class="form-control dark" name="tarif" id="tarif"
+                                           placeholder="Entrez le tarif">
+                                </div>
+                                <button type="submit" class="btn btn-dark position-absolute w-25" style="right: 18px;">
+                                    Ajouter
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+     <!-- Modal de confirmation de suppression -->
+                    {% for abonne in abonnes %}
+                        <div class="modal fade" id="confirmDeleteModal{{ abonne.id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content p-2 dark">
+                        <div class="modal-header dark">
+                            <h5 class="modal-title dark" id="confirmDeleteModalLabel">Confirmation de suppression</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body dark">
+                            <p>Êtes-vous sûr de vouloir supprimer cet abonné {{ abonne.nom }} ?</p>
+                        </div>
+                        <a class=""></a>
+                        <div class="modal-footer dark">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                            <button type="button" class="btn btn-danger" id="confirmDeleteButton"><a  href="/Liste des Abonnés/5/{{ abonne.id }}" class="text-light">Supprimer</a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    {% endfor %}
+
+
+{% endblock %}

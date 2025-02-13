@@ -1,0 +1,129 @@
+{% extends 'Accueil.html' %}
+{% block content %}
+    <h5 class="font-italic font-weight-bold m-4">Gestion des Factures</h5>
+    <div class="mb-3 d-flex justify-content-end flex-row">
+        <select id="columnSelector" class="form-control d-inline" style="width: 100px">
+            <option>Abonné</option>
+            <option>Date Facture</option>
+            <option>Periode</option>
+            <option>Montant Total</option>
+            <option>Date Echeance</option>
+        </select>
+        <input type="text" id="searchInput" class="form-control w-25 d-inline" placeholder="Rechercher...">
+    </div>
+    <div class="container-fluid text-capitalize tex rounded p-1" style="height: 700px;overflow-y: auto;overflow-x: hidden">
+        {% for per in periode %}
+            <div class="container-fluid m-2 d-flex flex-row justify-content-between">
+                <h5 class="m-4">Factures de la periode <span class="text-info">{{ per.periode }}</span>  Total : <span class="text-success">{{ per.montant}} FCFA</span></h5>
+                <button class="btn btn-light p-3 shadow-sm rounded-pill" style="right: 15px;bottom: 100px;height: 60px">
+                    <a href="/Liste des Factures/6/{{ per.periode }}"><i class="fa fa-print mr-2"></i>Imprimer tous</a>
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table w-100 table-striped table-bordered" id="abonneTable">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Abonné</th>
+                        <th>Relevé</th>
+                        <th>Date Facture</th>
+                        <th>Periode</th>
+                        <th>Montant Total</th>
+                        <th>Date Echeance</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for facture in factures %}
+                        {% if per.periode == facture.periode %}
+                            <tr style="cursor: pointer">
+                                <td><a href="/Liste des Abonnés/1/{{ facture.releve.compteur.abonnee.id }}" style="text-transform: none" class="text-info">{{ facture.releve.compteur.abonnee }}</a></td>
+                                <td>{{ facture.releve }}</td>
+                                <td>{{ facture.date_facture }}</td>
+                                <td>{{ facture.periode }}</td>
+                                <td class="text-success">{{ facture.montant_total }} FCFA</td>
+                                <td>{{ facture.date_echeance }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDeleteModal{{ facture.id }}">
+                                        <i class="fa fa-trash mr-2"></i>Supprimer
+                                    </button>
+                                    <button type="button" class="btn btn-info">
+                                        <a href="/Liste des Factures/1/{{ facture.id }}" style="text-transform: none" class="text-light"><i class="fa fa-edit mr-2"></i>Modifier</a>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    </div>
+
+    <button class="btn btn-dark p-3 h6 position-fixed shadow-sm rounded-pill" data-toggle="modal" data-target="#abonneeModal" style="right: 15px;bottom: 20px;height: 60px"><i class="fa fa-add mr-2"></i>Ajouter</button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="abonneeModal" tabindex="-1" aria-labelledby="abonneeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content p-2 dark">
+                <div class="modal-header dark">
+                    <p class="modal-title h5 font-italic font-weight-bold dark" id="abonneeModalLabel">Nouveau Relevé</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body dark">
+                    <form method="post" action="{% url 'GestionFacture' 4 1 %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="releve">Relevé</label>
+                            <select id="releve" name="releve" class="form-control d-inline dark">
+                                <option value="">Sélectionner un relevé</option>
+                                {% for releve in releves %}
+                                    <option value="{{ releve.id }}">{{ releve }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_facture">Date facture</label>
+                            <input type="date" class="form-control dark" name="date_facture" id="date_facture" placeholder="Entrez la date de la facture">
+                        </div>
+                        <div class="form-group">
+                            <label for="periode">Période</label>
+                            <select id="periode" name="periode" class="form-control d-inline dark">
+                                <option value="">Sélectionner une période</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_echeance">Date échéance</label>
+                            <input type="date" class="form-control dark" name="date_echeance" id="date_echeance" placeholder="Entrez la date d'échéance">
+                        </div>
+                        <button type="submit" class="btn btn-dark position-absolute" style="right: 5px">Enregistrer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    {% for facture in factures %}
+        <div class="modal fade" id="confirmDeleteModal{{ facture.id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content p-2 dark">
+                    <div class="modal-header dark">
+                        <h5 class="modal-title dark" id="confirmDeleteModalLabel">Confirmation de suppression</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body dark">
+                        <p>Êtes-vous sûr de vouloir supprimer cette facture?</p>
+                    </div>
+                    <div class="modal-footer dark">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteButton"><a href="/Liste des Factures/5/{{ facture.id }}" class="text-light">Supprimer</a></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

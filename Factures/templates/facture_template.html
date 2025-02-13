@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture d'Eau</title>
+    <link rel="stylesheet" href="{% static 'src/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'src/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'src/styl.css' %}">
+    <style>
+        .penalite {
+            color: #FF5733; /* Couleur ergonomique pour les pénalités */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+{% for facture in factures %}
+    <div class="facture" style="margin-bottom: 150px;">
+        <div class="header">
+            <img src="{% static 'img/LogoFacture.jpg' %}" alt="Logo" class="logo">
+            <h3>Facture N°{{ facture.id }}</h3>
+        </div>
+
+        <h6 class="m-4 position-relative" style="text-align: end; font-weight: lighter;">Période
+            : <span class="text-info">{{ facture.periode }}</span></h6>
+        <h5 style="text-align: end; font-weight: lighter;">Date de la facture : {{ facture.date_facture }}</h5>
+
+        <h5>À Monsieur/Madame {{ facture.releve.compteur.abonnee }},</h5>
+        <div class="details" style="display: flex; justify-content: space-around;gap: -100px">
+            <p style="text-align: left;"><strong>Index avant : {{ facture.releve.index_avant }}</strong></p>
+            <p style="text-align: left;"><strong>Index après :{{ facture.releve.index_actuelle }}</strong></p>
+            <p style="text-align: left;"><strong>Consommation :{{ facture.releve.consommation }}</strong></p>
+        </div>
+        <div class="details" style="margin-top: -20px">
+            <p style="text-align: left;"><strong>Montant net à payer :{{ facture.montant_total }} FCFA</strong></p>
+            <p style="text-align: left;"><strong>Date d'échéance :{{ facture.date_echeance }}</strong></p>
+            <p><strong>Note :</strong> En cas de dépassement de la date d'échéance pour le paiement de votre facture
+                d'eau, une pénalité de <span class="penalite">500 FCFA</span> sera appliquée au montant net à payer. En
+                outre, si votre compteur est arrêté, une pénalité supplémentaire de <span
+                        class="penalite">500 FCFA</span> sera ajoutée.</p></div>
+        <div class="message" style="margin-top: -10px; text-align: end;">
+            <p>Nous vous remercions pour votre compréhension et votre coopération.</p>
+        </div>
+    </div>
+{% endfor %}
+
+</body>
+<script src="{% static 'src/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'GestFacture/static/src/fontawesome/js/all.min.js' %}"></script>
+</html>
+
+

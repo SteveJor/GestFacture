@@ -1,0 +1,47 @@
+{% extends 'Accueil.html' %}
+{% block content %}
+    <div class="modal-content container  container w-50 p-2 dark">
+        <div class="modal-header dark">
+            <p class="modal-title h5 font-italic font-weight-bold dark" id="abonneeModalLabel">Modification de la facture de {{ facture.abonnee}}</p>
+        </div>
+        <div class="modal-body dark" style="height: 500px">
+            <form method="post" action="{% url 'GestionFacture' 3 1 %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="releve">Relevé</label>
+                            <select id="releve" name="releve" class="form-control d-inline dark">
+                               <option value="{{ facture.releve.id }}">{{ facture.releve }}</option>
+                                {% for releve in releves %}
+                                    {% if releve.id != facture.releve.id %}
+                                        <option value="{{ releve.id }}">{{ releve }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_facture">Date facture</label>
+                            <input type="date" class="form-control dark" value="{{ date_facture_formatted }}" name="date_facture" id="date_facture"
+                                   placeholder="Entrez la date de la facture">
+                        </div>
+                        <div class="form-group">
+                            <label for="periode">Période</label>
+                            <input id="periode" value="{{ facture.periode }}" name="periode" class="form-control d-inline dark">
+                        </div>
+                        <div class="form-group">
+                            <label for="montant_total">Montant total</label>
+                            <input type="number" value="{{ facture.montant_total }}" step="0.01" class="form-control dark" name="montant_total"
+                                   id="montant_total" placeholder="Entrez le montant total">
+                        </div>
+                        <div class="form-group">
+                            <label for="date_echeance">Date échéance</label>
+                            <input type="date"  value="{{ date_echeance_formatted }}"  class="form-control dark" name="date_echeance" id="date_echeance"
+                                   placeholder="Entrez la date d'échéance">
+                        </div>
+                <button type="submit" class="btn btn-dark position-absolute" style="right: 5px">
+                    Enregistrer
+                </button>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

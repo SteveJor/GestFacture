@@ -1,0 +1,126 @@
+{% extends 'Accueil.html' %}
+{% block content %}
+    <h5 class="font-italic font-weight-bold m-4">Gestion des Relevés</h5>
+    <div class="mb-3 d-flex justify-content-end flex-row">
+                <select id="columnSelector" class="form-control d-inline" style="width: 100px">
+                    <option>Compteur</option>
+                        <option>Date relevé</option>
+                        <option>Index avant</option>
+                        <option>Index après</option>
+                        <option>Consommation</option>
+                </select>
+                <input type="text" id="searchInput" class="form-control  w-25  d-inline" placeholder="Rechercher...">
+            </div>
+            <div class="container-fluid text-capitalize tex rounded p-1" style="height: 700px;overflow: auto">
+
+                <table class="table container w-75 table-striped table-bordered" id="abonneTable">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Compteur</th>
+                        <th>Date relevé</th>
+                        <th>Index avant</th>
+                        <th>Index après</th>
+                        <th>Consommation</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for releve in releves %}
+                        <tr style="cursor: pointer">
+                            <td style="width: 150px"><a href="/Liste des Relevés/1/{{ releve.compteur.id }}" style="text-transform: none" class="text-info">Compteur {{releve.compteur.numero_compteur}} de {{ releve.compteur.abonnee.nom}}</a></td>
+                            <td>{{ releve.date_releve }}</td>
+                            <td>{{ releve.index_avant }}</td>
+                            <td>{{ releve.index_actuelle }}</td>
+                            <td>{{ releve.consommation }}</td>
+                            <td style="width: 280px">
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDeleteModal{{ releve.id }}" data-abonnee="{{ releve.id }}">
+                                    <i class="fa fa-trash mr-2"></i>Supprimer
+                                </button>
+                                <button type="button" class="btn btn-info" >
+                                    <a href="/Liste des Relevés/1/{{ releve.id }}" style="text-transform: none" class="text-light"><i class="fa fa-edit mr-2"></i>Modifier</a>
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="btn btn-dark p-3 h6 position-fixed shadow-sm rounded-pill " data-toggle="modal"
+                    data-target="#abonneeModal" style="right: 15px;bottom: 20px;height: 60px"><i class="fa fa-add"></i>Ajouter
+            </button>
+            <!-- Modal -->
+            <div class="modal fade" id="abonneeModal" tabindex="-1" aria-labelledby="abonneeModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content p-2 dark">
+                        <div class="modal-header dark">
+                            <p class="modal-title h5 font-italic font-weight-bold dark" id="abonneeModalLabel">Nouveau
+                                Relevé</p>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body dark" style="height: 490px">
+                            <form method="post" action="{% url 'GestionReleve' 4 1 %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="compteur">Compteur</label>
+        <select id="compteur" name="compteur" class="form-control d-inline dark">
+            <option value="">Selectionner un compteur</option>
+            {% for compteur in compteurs %}
+                <option value="{{ compteur.id }}">Compteur {{ compteur.numero_compteur }} de {{ compteur.abonnee.nom }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="date_releve">Date relevé</label>
+        <input type="datetime-local" class="form-control dark" name="date_releve" id="date_releve" placeholder="Entrez la date de relevé">
+    </div>
+    <div class="form-group">
+        <label for="index_avant">Index avant</label>
+        <input type="number" step="0.01" class="form-control dark" name="index_avant" placeholder="Entrez l'index avant" id="index_avant">
+    </div>
+    <div class="form-group">
+        <label for="index_actuelle">Index après</label>
+        <input type="number" step="0.01" class="form-control dark" name="index_actuelle" id="index_actuelle" placeholder="Entrez l'index après">
+    </div>
+    <div class="form-group">
+        <label for="consommation">Consommation</label>
+        <input type="number" step="0.01" class="form-control dark" name="consommation" id="consommation" placeholder="Entrez la consommation">
+    </div>
+    <button type="submit" class="btn btn-dark position-absolute" style="right: 5px">
+        Enregistrer
+    </button>
+</form>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+    <!-- Modal de confirmation de suppression -->
+            {% for releve in releves %}
+                        <div class="modal fade" id="confirmDeleteModal{{ releve.id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content p-2 dark">
+                        <div class="modal-header dark">
+                            <h5 class="modal-title dark" id="confirmDeleteModalLabel">Confirmation de suppression</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body dark">
+                            <p>Êtes-vous sûr de vouloir supprimer le Compteur {{releve.compteur.numero_compteur}} de {{ releve.compteur.abonnee.nom}}?</p>
+                        </div>
+                        <a class=""></a>
+                        <div class="modal-footer dark">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                            <button type="button" class="btn btn-danger" id="confirmDeleteButton"><a  href="/Liste des Relevés/5/{{ releve.id }}" class="text-light">Supprimer</a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    {% endfor %}
+{% endblock %}
